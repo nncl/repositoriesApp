@@ -1,4 +1,4 @@
-import React, {Fragment} from 'react';
+import React from 'react';
 import {
   SafeAreaView,
   StyleSheet,
@@ -8,28 +8,7 @@ import {
   StatusBar,
 } from 'react-native';
 
-import {
-  Colors
-} from 'react-native/Libraries/NewAppScreen';
-
-const App = () => {
-  return (
-    <Fragment>
-      <StatusBar barStyle="dark-content" />
-      <SafeAreaView>
-        <ScrollView
-          contentInsetAdjustmentBehavior="automatic"
-          style={styles.scrollView}>
-          <View style={styles.body}>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>Hello World</Text>
-            </View>
-          </View>
-        </ScrollView>
-      </SafeAreaView>
-    </Fragment>
-  );
-};
+import { Colors } from 'react-native/Libraries/NewAppScreen';
 
 const styles = StyleSheet.create({
   scrollView: {
@@ -69,5 +48,25 @@ const styles = StyleSheet.create({
     textAlign: 'right',
   },
 });
+
+const App = () => {
+  return (
+    <>
+      <StatusBar barStyle="dark-content" />
+      <SafeAreaView>
+        <ScrollView
+          contentInsetAdjustmentBehavior="automatic"
+          style={styles.scrollView}
+        >
+          <View style={styles.body}>
+            <View style={styles.sectionContainer}>
+              <Text style={styles.sectionTitle}>Hello World</Text>
+            </View>
+          </View>
+        </ScrollView>
+      </SafeAreaView>
+    </>
+  );
+};
 
 export default App;
