@@ -10,6 +10,8 @@ import {
 
 import { Colors } from 'react-native/Libraries/NewAppScreen';
 
+import './config/ReactotronConfig';
+
 const styles = StyleSheet.create({
   scrollView: {
     backgroundColor: Colors.lighter,
@@ -48,6 +50,9 @@ const styles = StyleSheet.create({
     textAlign: 'right',
   },
 });
+
+// console.tron.log();
+// console.tron.warn();
 
 const App = () => {
   return (
