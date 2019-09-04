@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import AsyncStorage from '@react-native-community/async-storage';
 import { Keyboard, ActivityIndicator } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import PropTypes from 'prop-types';
 import api from '../../services/api';
 import {
   Container,
@@ -18,6 +19,16 @@ import {
 } from './styles';
 
 export default class Main extends Component {
+  static navigationOptions = {
+    title: 'Users',
+  };
+
+  static propTypes = {
+    navigation: PropTypes.shape({
+      navigate: PropTypes.func,
+    }).isRequired,
+  };
+
   state = {
     newUser: '',
     users: [],
@@ -56,6 +67,11 @@ export default class Main extends Component {
     });
   };
 
+  handleNavigate = user => {
+    const { navigation } = this.props;
+    navigation.navigate('User', { user });
+  };
+
   render() {
     const { users, newUser, loading } = this.state;
     return (
@@ -88,11 +104,8 @@ export default class Main extends Component {
               <Name>{item.name}</Name>
               <Bio>{item.bio}</Bio>
 
-              <ProfileButton onPress={() => {
-              }}>
-                <ProfileButtonText>
-                  Profile
-                </ProfileButtonText>
+              <ProfileButton onPress={() => this.handleNavigate(item)}>
+                <ProfileButtonText>Profile</ProfileButtonText>
               </ProfileButton>
             </User>
           )}
@@ -101,7 +114,3 @@ export default class Main extends Component {
     );
   }
 }
-
-Main.navigationOptions = {
-  title: 'Users',
-};
