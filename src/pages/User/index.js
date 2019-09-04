@@ -31,20 +31,44 @@ export default class User extends Component {
 
   state = {
     stars: [],
-    loading: true,
+    loading: false,
+    page: 1,
+    hasMore: true,
   };
 
-  async componentDidMount(): void {
-    const { navigation } = this.props;
-    const user = navigation.getParam('user');
-    const response = await api.get(`/users/${user.login}/starred`);
-    this.setState({ stars: response.data, loading: false });
+  componentDidMount(): void {
+    this.getStarred();
   }
+
+  getStarred = async () => {
+    this.setState({ loading: true });
+    const { navigation } = this.props;
+    const { page, stars } = this.state;
+    const user = navigation.getParam('user');
+    const response = await api.get(`/users/${user.login}/starred`, {
+      params: { page },
+    });
+    const arr = stars;
+    response.data.map(item => arr.push(item));
+    this.setState({ stars: arr, loading: false });
+  };
+
+  loadMore = () => {
+    const { page } = this.state;
+    this.setState({ page: page + 1 });
+    this.getStarred();
+  };
 
   render() {
     const { navigation } = this.props;
-    const { stars, loading } = this.state;
+    const { stars, loading, page } = this.state;
     const user = navigation.getParam('user');
+    const spinner = loading ? (
+      <Spacer>
+        <ActivityIndicator color="#915c91" />
+      </Spacer>
+    ) : null;
+
     return (
       <Container>
         <Header>
@@ -53,25 +77,25 @@ export default class User extends Component {
           <Bio>{user.bio}</Bio>
         </Header>
 
-        {loading ? (
-          <Spacer>
-            <ActivityIndicator color="#915c91" />
-          </Spacer>
-        ) : (
-          <Stars
-            data={stars}
-            keyExtractor={star => String(star.id)}
-            renderItem={({ item }) => (
-              <Starred>
-                <OnwerAvatar source={{ uri: item.owner.avatar_url }} />
-                <Info>
-                  <Title>{item.name}</Title>
-                  <Author>{item.owner.login}</Author>
-                </Info>
-              </Starred>
-            )}
-          />
-        )}
+        {page === 1 ? spinner : null}
+
+        <Stars
+          onEndReachedThreshold={0.2}
+          onEndReached={this.loadMore}
+          data={stars}
+          keyExtractor={star => String(star.id)}
+          renderItem={({ item }) => (
+            <Starred>
+              <OnwerAvatar source={{ uri: item.owner.avatar_url }} />
+              <Info>
+                <Title>{item.id}</Title>
+                <Author>{item.owner.login}</Author>
+              </Info>
+            </Starred>
+          )}
+        />
+
+        {page !== 1 ? spinner : null}
       </Container>
     );
   }
