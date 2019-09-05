@@ -32,8 +32,8 @@ export default class User extends Component {
   state = {
     stars: [],
     loading: false,
+    refreshing: false,
     page: 1,
-    hasMore: true,
   };
 
   componentDidMount(): void {
@@ -50,7 +50,7 @@ export default class User extends Component {
     });
     const arr = stars;
     response.data.map(item => arr.push(item));
-    this.setState({ stars: arr, loading: false, page });
+    this.setState({ stars: arr, loading: false, page, refreshing: false });
   };
 
   loadMore = () => {
@@ -59,9 +59,13 @@ export default class User extends Component {
     this.getStarred(nextPage);
   };
 
+  reset = () => {
+    this.setState({ stars: [], page: 1, refreshing: true }, this.getStarred);
+  };
+
   render() {
     const { navigation } = this.props;
-    const { stars, loading, page } = this.state;
+    const { stars, loading, page, refreshing } = this.state;
     const user = navigation.getParam('user');
     const spinner = loading ? (
       <Spacer>
@@ -77,11 +81,13 @@ export default class User extends Component {
           <Bio>{user.bio}</Bio>
         </Header>
 
-        {page === 1 ? spinner : null}
+        {!refreshing && page === 1 ? spinner : null}
 
         <Stars
           onEndReachedThreshold={0.2}
           onEndReached={this.loadMore}
+          onRefresh={this.reset}
+          refreshing={refreshing}
           data={stars}
           keyExtractor={star => String(star.id)}
           renderItem={({ item }) => (
@@ -95,7 +101,7 @@ export default class User extends Component {
           )}
         />
 
-        {page !== 1 ? spinner : null}
+        {!refreshing && page !== 1 ? spinner : null}
       </Container>
     );
   }
